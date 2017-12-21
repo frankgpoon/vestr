@@ -29,5 +29,5 @@ app.post('/login', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log("Test server on Port 8080");
+    console.log("Test server on Port " + PORT);
 });
