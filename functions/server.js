@@ -43,5 +43,9 @@ app.post('/login', (req, res) => {
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials , app);
 
-httpServer.listen(HTTPPORT);
-httpsServer.listen(HTTPSPORT);
+httpServer.listen(HTTPPORT, () => {
+    console.log('HTTP server started at ' + HTTPPORT);
+});
+httpsServer.listen(HTTPSPORT, () => {
+    console.log('HTTPS server started at ' + HTTPSPORT);
+});
