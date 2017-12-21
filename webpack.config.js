@@ -5,6 +5,7 @@ export default {
     devtool: 'inline-source-map',
 
     entry: {
+        'mainBundle': path.resolve(__dirname, 'public/main.js'),
         'indexBundle': path.resolve(__dirname, 'public/index.js'),
         'accountBundle': path.resolve(__dirname, 'public/account.js')
     },
