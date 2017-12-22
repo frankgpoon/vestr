@@ -61,7 +61,7 @@ app.post('/register', (req, res) => {
 
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
         connection.connect();
-        connection.query('INSERT INTO USERS (Name, Email, PasswordHash) VALUES (?, ?, ?)',
+        connection.query('INSERT INTO Users (Name, Email, PasswordHash) VALUES (?, ?, ?)',
             [req.body.name, req.body.email, hash],
             (error, results, fields) => {
                 if (error) console.log(error);
