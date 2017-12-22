@@ -17,8 +17,8 @@ const HTTPPORT = 8080;
 const HTTPSPORT = 8443;
 
 // Enable HTTPS for cert
-var certificate = fs.readFileSync('/secretstuff/vestr/fullchain.pem', 'utf8');
-var privateKey = fs.readFileSync('/secretstuff/vestr/privkey.pem', 'utf8');
+var certificate = fs.readFileSync('/etc/letsencrypt/live/vestr.frankpoon.com/fullchain.pem', 'utf8');
+var privateKey = fs.readFileSync('/etc/letsencrypt/live/vestr.frankpoon.com/privkey.pem', 'utf8');
 var credentials = {
     key: privateKey,
     cert: certificate
