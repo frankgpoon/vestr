@@ -7,6 +7,7 @@ import fs from 'fs';
 import http from 'http';
 import https from 'https';
 import mysql from 'mysql';
+import bcrypt from 'bcrypt';
 
 // Constants set for running the server
 const app = express();
@@ -24,22 +25,15 @@ var credentials = {
     cert: certificate
 };
 
-// MySQL stuff
+// MySQL config
 var connection = mysql.createConnection(
     JSON.parse(fs.readFileSync('/secretstuff/vestr/mysql-config.json', 'utf-8'))
 );
 
-connection.connect((err) => {
-    if (err) {
-        console.log('error: ' + err.stack);
-        return;
-    }
-    console.log('connected as id' + connection.threadId);
-});
+// Bcrypt config
+const saltRounds = 6;
 
-connection.end();
-
-// Helps
+// Helps processes POST requests
 app.use(bodyParser.urlencoded( {extended: true} ));
 
 app.use(require('webpack-dev-middleware')(compiler, {
@@ -64,8 +58,17 @@ app.post('/login', (req, res) => {
 
 app.post('/register', (req, res) => {
     res.send('/register POST request');
-    console.log(req.body);
-    console.log(typeof req.body);
+
+    bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+        connection.connect();
+        connection.query('INSERT INTO USERS (Name, Email, PasswordHash) VALUES (?, ?, ?)',
+            [req.body.name, req.body.email, hash],
+            (error, results, fields) => {
+                if (error) console.log(error);
+            }
+        );
+        connection.end();
+    });
 });
 
 // starts server in both HTTP and HTTPS (may remove HTTP later)

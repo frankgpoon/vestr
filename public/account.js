@@ -63,7 +63,7 @@ class RegisterForm extends React.Component {
                             <h3>Register</h3>
                             <FormGroup>
                                 <Col xs={10}>
-                                    <ControlLabel>First Name</ControlLabel>
+                                    <ControlLabel>Name</ControlLabel>
                                     <FormControl type="text" placeholder="Name" name="name" />
                                 </Col>
                             </FormGroup>
