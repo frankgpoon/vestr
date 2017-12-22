@@ -13,10 +13,8 @@ class AccountManager extends React.Component {
         } else {
             return (
                 <div>
-                    <Col>
-                        <LoginForm />
-                        <RegisterForm />
-                    </Col>
+                    <LoginForm />
+                    <RegisterForm />
                 </div>
             );
         }
@@ -66,13 +64,7 @@ class RegisterForm extends React.Component {
                             <FormGroup>
                                 <Col xs={10}>
                                     <ControlLabel>First Name</ControlLabel>
-                                    <FormControl type="text" placeholder="First Name" name="firstname" />
-                                </Col>
-                            </FormGroup>
-                            <FormGroup>
-                                <Col xs={10}>
-                                    <ControlLabel>Last Name</ControlLabel>
-                                    <FormControl type="text" placeholder="Last Name" name="lastname" />
+                                    <FormControl type="text" placeholder="Name" name="name" />
                                 </Col>
                             </FormGroup>
                             <FormGroup>

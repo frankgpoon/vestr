@@ -13,7 +13,7 @@ class Header extends React.Component {
             <div>
                 <Navbar>
                     <Navbar.Header>
-                        <Navbar.Brand>vestr</Navbar.Brand>
+                        <Navbar.Brand><a href="https://vestr.frankpoon.com">vestr</a></Navbar.Brand>
                         <Navbar.Toggle />
                     </Navbar.Header>
                     <Navbar.Collapse>
