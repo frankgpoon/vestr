@@ -135,7 +135,7 @@ app.post('/register', (req, res) => {
                     (errors, results, fields) => {
                         var user = results[0];
                         req.login(user, (err) => {
-                            if (err) { return next(err); }
+                            if (err) console.log(err);
                             return res.redirect('/');
                         });
                     }
