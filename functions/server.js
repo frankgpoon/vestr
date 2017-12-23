@@ -71,7 +71,9 @@ passport.use(new LocalStrategy({
                 bcrypt.compare(password, user.PasswordHash, (error, res) => {
                     if (res) {
                         console.log('login successful');
-                        return done(null, user);
+                        passport.serializeUser(function(user, done) {
+                            done(null, user.Email);
+                        });
                     } else {
                         console.log('wrong password');
                         return done(null, res);
