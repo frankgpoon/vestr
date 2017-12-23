@@ -66,8 +66,8 @@ app.post('/login', (req, res) => {
         [req.body.email],
         (error, results, fields) => {
             if (error) console.log(error);
-            console.log(results);
-            console.log(typeof results);
+            console.log(results.Email);
+            console.log(results[0].Email);
         }
     )
     connection.end();
