@@ -39,7 +39,7 @@ var LocalStrategy = passportLocal.Strategy;
 
 // Helps processes POST requests
 app.use(bodyParser.urlencoded( {extended: true} ));
-app.use(express.session(JSON.parse(fs.readFileSync('/secretstuff/vestr/session-config.json', 'utf-8'))));
+app.use(session(JSON.parse(fs.readFileSync('/secretstuff/vestr/session-config.json', 'utf-8'))));
 app.use(passport.initialize());
 app.use(passport.session());
 
