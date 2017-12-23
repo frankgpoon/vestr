@@ -28,9 +28,7 @@ var credentials = {
 };
 
 // MySQL config
-var connection = mysql.createConnection(
-    JSON.parse(fs.readFileSync('/secretstuff/vestr/mysql-config.json', 'utf-8'))
-);
+var mysqlConfig = JSON.parse(fs.readFileSync('/secretstuff/vestr/mysql-config.json', 'utf-8'));
 
 // Bcrypt config and authentication
 const saltRounds = 6;
@@ -62,14 +60,14 @@ app.get('/account', (req, res) => {
 
 // Handles loading POST
 app.post('/login', (req, res) => {
+    var connection = mysql.createConnection(mysqlConfig);
     connection.query(
         'SELECT * FROM Users WHERE Email = ?',
         [req.body.email],
         (error, results, fields) => {
             if (error) console.log(error);
             console.log(results);
-            console.log('field below');
-            console.log(fields);
+            console.log(typeof results);
         }
     )
     connection.end();
@@ -79,6 +77,7 @@ app.post('/register', (req, res) => {
     res.send('/register POST request');
 
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+        var connection = mysql.createConnection(mysqlConfig);
         connection.query(
             'INSERT INTO Users (Name, Email, PasswordHash) VALUES (?, ?, ?)',
             [req.body.name, req.body.email, hash],
@@ -86,6 +85,7 @@ app.post('/register', (req, res) => {
                 if (error) console.log(error);
             }
         );
+        connection.end();
     });
 });
 
