@@ -59,29 +59,41 @@ passport.use(new LocalStrategy({
             [username],
             (error, results, fields) => {
                 if (error) {
+                    connection.end();
                     return done(error);
                 }
 
                 var user = results[0];
                 if (user === undefined) {
                     console.log('could not find user');
+                    connection.end();
                     return done(null, false);
                 }
 
                 bcrypt.compare(password, user.PasswordHash, (error, res) => {
                     if (res) {
                         console.log('login successful');
-                        passport.serializeUser(function(user, done) {
+                        passport.serializeUser( (user, done) => {
                             done(null, user.Email);
+                        });
+                        passport.deserializeUser( (email, done) => {
+                            connection.query(
+                                'SELECT * FROM Users WHERE Email = ?',
+                                [email],
+                                (errors, results, fields) => {
+                                    done(errors, results[0]);
+                                }
+                            );
+                            connection.end();
                         });
                     } else {
                         console.log('wrong password');
+                        connection.end();
                         return done(null, res);
                     }
                 });
             }
         )
-        connection.end();
     }
 ));
 
@@ -95,16 +107,17 @@ app.get('/account', (req, res) => {
 });
 
 app.get('logout', (req, res) => {
-    req.session.destroy();
-    req.logout();
-    res.send('logout get');
+    req.session.destroy((err) => {
+        if (err) console.log(err);
+        req.logout();
+        res.redirect('/');
+    });
 });
 
 // Handles loading POST
 app.post('/login',
-    passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/account'
+    passport.authenticate('local', { failureRedirect: '/account' }, (req, res) => {
+        res.redirect('/');
     })
 );
 
@@ -116,9 +129,19 @@ app.post('/register', (req, res) => {
             [req.body.name, req.body.email, hash],
             (error, results, fields) => {
                 if (error) console.log(error);
+                connection.query(
+                    'SELECT * FROM Users WHERE Email = ?',
+                    [req.body.email],
+                    (errors, results, fields) => {
+                        var user = results[0];
+                        req.login(user, (err) => {
+                            if (err) { return next(err); }
+                            return res.redirect('/');
+                        });
+                    }
+                );
             }
         );
-        connection.end();
     });
 });
 
