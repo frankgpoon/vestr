@@ -44,10 +44,12 @@ app.use(require('webpack-dev-middleware')(compiler, {
     publicPath: config.output.publicPath
 }));
 
+/*
 passport.user(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
 }));
+*/
 
 // Handles loading GET
 app.get('/', (req, res) => {
