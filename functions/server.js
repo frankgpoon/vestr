@@ -97,7 +97,7 @@ app.get('/account', (req, res) => {
 app.get('logout', (req, res) => {
     req.session.destroy();
     req.logout();
-    res.redirect('/');
+    res.send('logout get');
 });
 
 // Handles loading POST
@@ -116,7 +116,6 @@ app.post('/register', (req, res) => {
             [req.body.name, req.body.email, hash],
             (error, results, fields) => {
                 if (error) console.log(error);
-                console.log(results);
             }
         );
         connection.end();
