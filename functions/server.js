@@ -1,11 +1,14 @@
 import express from 'express';
-import path from 'path';
-import webpack from 'webpack';
-import config from '../webpack.config';
-import bodyParser from 'body-parser';
-import fs from 'fs';
 import http from 'http';
 import https from 'https';
+import fs from 'fs';
+import path from 'path';
+
+import webpack from 'webpack';
+import config from '../webpack.config';
+import session from 'express-session';
+
+import bodyParser from 'body-parser';
 import mysql from 'mysql';
 import bcrypt from 'bcrypt';
 import passport from 'passport';
@@ -36,18 +39,49 @@ var LocalStrategy = passportLocal.Strategy;
 
 // Helps processes POST requests
 app.use(bodyParser.urlencoded( {extended: true} ));
+app.use(express.session(JSON.parse(fs.readFileSync('/secretstuff/vestr/session-config.json', 'utf-8'))));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(require('webpack-dev-middleware')(compiler, {
     noInfo: true,
     publicPath: config.output.publicPath
 }));
 
-/*
-passport.user(new LocalStrategy({
+passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
-}));
-*/
+    },
+    (username, password, done) => {
+        var connection = mysql.createConnection(mysqlConfig);
+        connection.query(
+            'SELECT * FROM Users WHERE Email = ?',
+            [req.body.email],
+            (error, results, fields) => {
+                if (error) {
+                    return done(error);
+                }
+
+                var user = results[0];
+                if (user === undefined) {
+                    console.log('could not find user');
+                    return done(null, false);
+                }
+
+                bcrypt.compare(req.body.password, user.PasswordHash, (error, res) => {
+                    if (res) {
+                        console.log('login successful');
+                        return done(null, user);
+                    } else {
+                        console.log('wrong password');
+                        return done(null, res);
+                    }
+                });
+            }
+        )
+        connection.end();
+    }
+));
 
 // Handles loading GET
 app.get('/', (req, res) => {
@@ -58,19 +92,17 @@ app.get('/account', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/account.html'))
 });
 
+app.get('logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+});
+
 // Handles loading POST
 app.post('/login', (req, res) => {
-    var connection = mysql.createConnection(mysqlConfig);
-    connection.query(
-        'SELECT * FROM Users WHERE Email = ?',
-        [req.body.email],
-        (error, results, fields) => {
-            if (error) console.log(error);
-            console.log(results.Email);
-            console.log(results[0].Email);
-        }
-    )
-    connection.end();
+    passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/account'
+    });
 });
 
 app.post('/register', (req, res) => {
@@ -89,15 +121,10 @@ app.post('/register', (req, res) => {
     });
 });
 
-// starts server in both HTTP and HTTPS (may remove HTTP later)
-// var httpServer = http.createServer(app);
-var httpsServer = https.createServer(credentials , app);
 
-/*
-httpServer.listen(HTTPPORT, () => {
-    console.log('HTTP server started at ' + HTTPPORT);
-});
-*/
+
+// starts server in HTTPS only
+var httpsServer = https.createServer(credentials , app);
 
 httpsServer.listen(HTTPSPORT, () => {
     console.log('HTTPS server started at ' + HTTPSPORT);
