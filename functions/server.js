@@ -98,12 +98,12 @@ app.get('logout', (req, res) => {
 });
 
 // Handles loading POST
-app.post('/login', (req, res) => {
+app.post('/login',
     passport.authenticate('local', {
         successRedirect: '/',
         failureRedirect: '/account'
-    });
-});
+    })
+);
 
 app.post('/register', (req, res) => {
     res.send('/register POST request');
