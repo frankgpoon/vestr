@@ -32,8 +32,9 @@ var connection = mysql.createConnection(
     JSON.parse(fs.readFileSync('/secretstuff/vestr/mysql-config.json', 'utf-8'))
 );
 
-// Bcrypt config
+// Bcrypt config and authentication
 const saltRounds = 6;
+var LocalStrategy = passportLocal.Strategy;
 
 // Helps processes POST requests
 app.use(bodyParser.urlencoded( {extended: true} ));
