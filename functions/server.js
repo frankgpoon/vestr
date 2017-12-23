@@ -62,7 +62,6 @@ app.get('/account', (req, res) => {
 
 // Handles loading POST
 app.post('/login', (req, res) => {
-    connection.connect();
     connection.query(
         'SELECT * FROM Users WHERE Email = ?',
         [req.body.email],
@@ -80,7 +79,6 @@ app.post('/register', (req, res) => {
     res.send('/register POST request');
 
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
-        connection.connect();
         connection.query(
             'INSERT INTO Users (Name, Email, PasswordHash) VALUES (?, ?, ?)',
             [req.body.name, req.body.email, hash],
@@ -88,7 +86,6 @@ app.post('/register', (req, res) => {
                 if (error) console.log(error);
             }
         );
-        connection.end();
     });
 });
 
