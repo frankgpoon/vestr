@@ -56,7 +56,7 @@ passport.use(new LocalStrategy({
         var connection = mysql.createConnection(mysqlConfig);
         connection.query(
             'SELECT * FROM Users WHERE Email = ?',
-            [req.body.email],
+            [username],
             (error, results, fields) => {
                 if (error) {
                     return done(error);
@@ -68,7 +68,7 @@ passport.use(new LocalStrategy({
                     return done(null, false);
                 }
 
-                bcrypt.compare(req.body.password, user.PasswordHash, (error, res) => {
+                bcrypt.compare(password, user.PasswordHash, (error, res) => {
                     if (res) {
                         console.log('login successful');
                         return done(null, user);
