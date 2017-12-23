@@ -95,6 +95,7 @@ app.get('/account', (req, res) => {
 });
 
 app.get('logout', (req, res) => {
+    req.session.destroy();
     req.logout();
     res.redirect('/');
 });
@@ -108,8 +109,6 @@ app.post('/login',
 );
 
 app.post('/register', (req, res) => {
-    res.send('/register POST request');
-
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
         var connection = mysql.createConnection(mysqlConfig);
         connection.query(
@@ -117,6 +116,7 @@ app.post('/register', (req, res) => {
             [req.body.name, req.body.email, hash],
             (error, results, fields) => {
                 if (error) console.log(error);
+                console.log(results);
             }
         );
         connection.end();
@@ -125,7 +125,7 @@ app.post('/register', (req, res) => {
 
 
 
-// starts server in HTTPS only
+// starts server in HTTPS only - future: create HTTP only test environment
 var httpsServer = https.createServer(credentials , app);
 
 httpsServer.listen(HTTPSPORT, () => {
