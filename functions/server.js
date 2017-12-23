@@ -9,7 +9,7 @@ import https from 'https';
 import mysql from 'mysql';
 import bcrypt from 'bcrypt';
 import passport from 'passport';
-import LocalStrategy from 'passport-local.Strategy'
+import passportLocal from 'passport-local';
 
 // Constants set for running the server
 const app = express();
