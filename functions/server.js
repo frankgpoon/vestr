@@ -117,8 +117,9 @@ app.get('/logout', (req, res) => {
 
 // Handles loading POST
 app.post('/login',
-    passport.authenticate('local', { failureRedirect: '/account' }, (req, res) => {
-        res.redirect('/');
+    passport.authenticate('local', {
+        failureRedirect: '/account',
+        successRedirect: '/'
     })
 );
 
