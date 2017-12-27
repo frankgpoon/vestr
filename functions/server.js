@@ -73,6 +73,7 @@ passport.use(new LocalStrategy({
                 bcrypt.compare(password, user.PasswordHash, (error, res) => {
                     if (res) {
                         console.log('login successful');
+                        console.log(user);
                         passport.serializeUser( (user, done) => {
                             done(null, user.Email);
                         });
@@ -106,7 +107,7 @@ app.get('/account', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/account.html'))
 });
 
-app.get('logout', (req, res) => {
+app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) console.log(err);
         req.logout();
@@ -134,6 +135,8 @@ app.post('/register', (req, res) => {
                     [req.body.email],
                     (errors, results, fields) => {
                         var user = results[0];
+                        console.log('register func');
+                        console.log(user);
                         req.login(user, (err) => {
                             if (err) console.log(err);
                             return res.redirect('/');
